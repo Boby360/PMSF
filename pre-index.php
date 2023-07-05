@@ -267,7 +267,6 @@ if (strtolower($map) === "rdm") {
                                         <?php
                                         if (! $noHighLevelData && ! $noMissingIVOnly) { ?>
                                             <hr class="dropdown-divider">
-											
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" id="missing-iv-only-switch" type="checkbox" name="missing-iv-only-switch">
                                                 <label class="form-check-label" for="missing-iv-only-switch"><?php echo i8ln('Only Missing IV') ?></label>
