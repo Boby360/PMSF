@@ -538,7 +538,7 @@ if (strtolower($map) === "rdm") {
                                             <?php
                                             }
                                             if (! $noLures) { ?>
-												<hr class="dropdown-divider">
+                                                <hr class="dropdown-divider">
                                                 <div class="form-check form-switch">
                                                     <input class="form-check-input" id="lures-switch" type="checkbox" name="lures-switch">
                                                     <label class="form-check-label" for="lures-switch"><?php echo i8ln('Lured Pokéstops only') ?></label>
