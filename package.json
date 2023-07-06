@@ -74,7 +74,7 @@
     "push.js": "^1.0.12"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.6",
+    "@babel/core": "^7.22.8",
     "@babel/preset-env": "^7.22.5"
   }
 }
