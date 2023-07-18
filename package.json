@@ -48,7 +48,7 @@
     "grunt-cli": "^1.2.0",
     "grunt-contrib-clean": "latest",
     "grunt-contrib-concat": "latest",
-    "grunt-contrib-connect": "^3.0.0",
+    "grunt-contrib-connect": "^4.0.0",
     "grunt-contrib-copy": "latest",
     "grunt-contrib-cssmin": "latest",
     "grunt-contrib-htmlmin": "3.1.0",
