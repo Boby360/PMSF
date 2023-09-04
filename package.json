@@ -75,6 +75,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.22.9",
-    "@babel/preset-env": "^7.22.7"
+    "@babel/preset-env": "^7.22.15"
   }
 }
