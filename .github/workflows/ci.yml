@@ -17,24 +17,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # Cache npm dependencies
-    - name: Cache npm dependencies
-      uses: actions/cache@v2
-      with:
-        path: node_modules
-        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-npm-
-
-    # Cache Composer dependencies
-    - name: Cache Composer dependencies
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-composer-
-
     # Set up PHP (with Composer)
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
