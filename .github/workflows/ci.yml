@@ -45,7 +45,7 @@ jobs:
     # Install Composer dependencies
     - name: Install PHP dependencies with Composer
       run: |
-        composer install
+        composer install --dev
 
     # Set up Node.js
     - name: Set up Node.js
@@ -63,7 +63,7 @@ jobs:
       run: |
         npm run build
 
-#    # Run PHP tests (assuming PHPUnit is used)
-#    - name: Run PHP tests
-#      run: |
-#        vendor/bin/phpunit
+    # Run PHP tests (assuming PHPUnit is used)
+    - name: Run PHP tests
+      run: |
+        vendor/bin/phpunit
