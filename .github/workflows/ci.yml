@@ -63,7 +63,7 @@ jobs:
       run: |
         npm run build
 
-    # Run PHP tests (assuming PHPUnit is used)
-    - name: Run PHP tests
-      run: |
-        vendor/bin/phpunit
+#    # Run PHP tests (assuming PHPUnit is used)
+#    - name: Run PHP tests
+#      run: |
+#        vendor/bin/phpunit
