@@ -113,7 +113,7 @@ class Golbat extends Scanner
 
             // Form name and type(s)
             if (isset($pokemon["form"]) && $pokemon["form"] > 0) {
-                $forms = $this->data[$pokemon["pokemon_id"]]["forms"];
+                $forms = $this->data[$pokemon["pokemon_id"]]["forms"] ?? [];
                 foreach ($forms as $f => $v) {
                     if ($pokemon["form"] === intval($v['protoform'])) {
                         $types = $v['formtypes'];
@@ -579,7 +579,7 @@ class Golbat extends Scanner
                 $pokemon["pokemon_rarity"] = i8ln($this->data[$pokemon["pokemon_id"]]['rarity']);
 
                 if (isset($pokemon["form"]) && $pokemon["form"] > 0) {
-                    $forms = $this->data[$pokemon["pokemon_id"]]["forms"];
+                    $forms = $this->data[$pokemon["pokemon_id"]]["forms"] ?? [];
                     foreach ($forms as $f => $v) {
                         if ($pokemon["form"] === intval($v['protoform'])) {
                             $types = $v['formtypes'];
@@ -1140,7 +1140,7 @@ class Golbat extends Scanner
             $gym["url"] = !empty($gym["url"]) ? preg_replace("/^http:/i", "https:", $gym["url"]) : null;
             $gym["park"] = $noExEligible ? 0 : intval($gym["park"]);
             if (isset($gym["raid_pokemon_form"]) && $gym["raid_pokemon_form"] > 0) {
-                $forms = $this->data[$gym["raid_pokemon_id"]]["forms"];
+                $forms = $this->data[$gym["raid_pokemon_id"]]["forms"] ?? [];
                 foreach ($forms as $f => $v) {
                     if ($gym["raid_pokemon_form"] === intval($v['protoform'])) {
                         $gym["raid_pokemon_form_name"] = $v['nameform'];
