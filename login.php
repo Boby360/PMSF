@@ -462,6 +462,12 @@ if (!empty($_POST['refresh'])) {
     header('Content-Type: application/json');
     $answer = array();
     if ($_POST['refresh'] == 'discord') {
+        // Check if user session exists before accessing properties
+        if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
+            $answer['action'] = 'false';
+            echo json_encode($answer);
+            exit;
+        }
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level', 'discord_guilds'],['id' => $_SESSION['user']->id]);
         if (empty($dbUser)) {
             $answer['action'] = 'false';
