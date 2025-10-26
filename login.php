@@ -462,56 +462,35 @@ if (!empty($_POST['refresh'])) {
     header('Content-Type: application/json');
     $answer = array();
     
-    // Debug logging
-    error_log("Session refresh attempt - Engine: " . $_POST['refresh']);
-    error_log("Session exists: " . (isset($_SESSION['user']) ? 'yes' : 'no'));
-    error_log("Session user ID: " . (isset($_SESSION['user']->id) ? $_SESSION['user']->id : 'none'));
-    error_log("Session ID: " . session_id());
-    error_log("Process ID: " . getmypid());
-    error_log("LoginCookie: " . (isset($_COOKIE['LoginCookie']) ? $_COOKIE['LoginCookie'] : 'none'));
+
     
     if ($_POST['refresh'] == 'discord') {
         // Check if user session exists before accessing properties
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
             // Try to restore session from cookie if available
             if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
-                error_log("Attempting to restore session from cookie: " . $_COOKIE['LoginCookie']);
                 $cookieResult = validateCookie($_COOKIE['LoginCookie']);
                 if ($cookieResult !== false) {
-                    error_log("Session restored successfully from cookie");
                     // Session restored, continue with normal flow
                 } else {
-                    error_log("Failed to restore session from cookie - validateCookie returned false");
-                    error_log("Cookie value being validated: " . $_COOKIE['LoginCookie']);
-                    // Let's check if the user exists in database
-                    global $manualdb;
-                    $dbCheck = $manualdb->query("SELECT id, user FROM users WHERE session_id = :session_id", [":session_id" => $_COOKIE['LoginCookie']])->fetch();
-                    error_log("Database lookup result: " . ($dbCheck ? "User found: " . $dbCheck['user'] : "No user found"));
                     $answer['action'] = 'false';
                     echo json_encode($answer);
                     exit;
                 }
             } else {
-                error_log("Discord refresh failed: Session user is empty or missing ID, no cookie available");
                 $answer['action'] = 'false';
                 echo json_encode($answer);
                 exit;
             }
         }
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level', 'discord_guilds'],['id' => $_SESSION['user']->id]);
-        error_log("Discord refresh - DB user lookup: " . ($dbUser ? "Found user ID: " . $dbUser['id'] : "No user found"));
         if (empty($dbUser)) {
-            error_log("Discord refresh failed: Database user is empty");
             $answer['action'] = 'false';
         } else {
-            error_log("Discord refresh - Current access level: " . $dbUser['access_level']);
             $accessLevel = checkAccessLevelDiscord($dbUser['id'], json_decode($dbUser['discord_guilds']));
-            error_log("Discord refresh - New access level check result: " . ($accessLevel !== null ? $accessLevel : 'null'));
             if ($accessLevel == $dbUser['access_level']) {
-                error_log("Discord refresh - Access levels match, returning 'true'");
                 $answer['action'] = 'true';
             } elseif (!empty($accessLevel)) {
-                error_log("Discord refresh - Access level changed, updating database and returning 'reload'");
                 $manualdb->update('users', [
                     'access_level' => $accessLevel,
                     'last_loggedin' => time()
@@ -520,7 +499,6 @@ if (!empty($_POST['refresh'])) {
                 ]);
                 $answer['action'] = 'reload';
             } else {
-                error_log("Discord refresh - Access level check returned empty/null, setting access_level to null and returning 'reload'");
                 $manualdb->update('users', [
                     'access_level' => null,
                     'last_loggedin' => time()
@@ -536,18 +514,14 @@ if (!empty($_POST['refresh'])) {
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
             // Try to restore session from cookie if available
             if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
-                error_log("Attempting to restore native session from cookie: " . $_COOKIE['LoginCookie']);
                 if (validateCookie($_COOKIE['LoginCookie']) !== false) {
-                    error_log("Native session restored successfully from cookie");
                     // Session restored, continue with normal flow
                 } else {
-                    error_log("Failed to restore native session from cookie");
                     $answer['action'] = 'false';
                     echo json_encode($answer);
                     exit;
                 }
             } else {
-                error_log("Native refresh failed: Session user is empty or missing ID, no cookie available");
                 $answer['action'] = 'false';
                 echo json_encode($answer);
                 exit;
@@ -563,18 +537,14 @@ if (!empty($_POST['refresh'])) {
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
             // Try to restore session from cookie if available
             if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
-                error_log("Attempting to restore patreon session from cookie: " . $_COOKIE['LoginCookie']);
                 if (validateCookie($_COOKIE['LoginCookie']) !== false) {
-                    error_log("Patreon session restored successfully from cookie");
                     // Session restored, continue with normal flow
                 } else {
-                    error_log("Failed to restore patreon session from cookie");
                     $answer['action'] = 'false';
                     echo json_encode($answer);
                     exit;
                 }
             } else {
-                error_log("Patreon refresh failed: Session user is empty or missing ID, no cookie available");
                 $answer['action'] = 'false';
                 echo json_encode($answer);
                 exit;
@@ -607,11 +577,9 @@ if (!empty($_POST['refresh'])) {
     
     // If no valid refresh engine was found, return false
     if (empty($answer)) {
-        error_log("Refresh completed - No answer set, defaulting to 'false'");
         $answer['action'] = 'false';
     }
     
-    error_log("Final refresh response: " . json_encode($answer));
     $json = json_encode($answer);
     echo $json;
     die();
