@@ -133,6 +133,8 @@ if (isset($_GET['action'])) {
             ]
         )->fetch();
         if (!$info) {
+            // Log failed native login attempt - no account found
+            error_log("Login failed - Username: " . $_POST['uname'] . ", Login system: native, Reason: account not found, IP: " . $_SERVER['REMOTE_ADDR']);
             header("Location: ./login?action=login&error=no-account");
             die();
         }
@@ -162,6 +164,9 @@ if (isset($_GET['action'])) {
                 'login_system' => 'native'
             ]);
 
+            // Log successful native login
+            error_log("User login successful - Username: " . $_POST['uname'] . ", Login system: native, Session ID: " . session_id() . ", IP: " . $_SERVER['REMOTE_ADDR']);
+
             setcookie("LoginCookie", session_id(), time() + $sessionLifetime);
             setcookie("LoginEngine", 'native', time() + $sessionLifetime);
             if ($useLoginCookie) {
@@ -170,6 +175,8 @@ if (isset($_GET['action'])) {
             header("Location: .?login=true");
             die();
         } else {
+            // Log failed native login attempt
+            error_log("Login failed - Username: " . $_POST['uname'] . ", Login system: native, Reason: incorrect password, IP: " . $_SERVER['REMOTE_ADDR']);
             header("Location: ./login?action=login&error=password");
             die();
         }
@@ -294,6 +301,8 @@ if (isset($_GET['callback'])) {
                         'id' => $user->id,
                         'login_system' => 'discord'
                     ]);
+                    // Log successful Discord login (existing user)
+                    error_log("User login successful - Username: " . $user->username . "#" . $user->discriminator . ", Login system: discord, Session ID: " . $response->access_token . ", IP: " . $_SERVER['REMOTE_ADDR'] . ", Access level: " . $accessRole);
                 } else {
                     $manualdb->insert('users', [
                         'session_token' => $_SESSION['token'],
@@ -307,6 +316,8 @@ if (isset($_GET['callback'])) {
                         'discord_guilds' => json_encode($guilds),
                         'last_loggedin' => time()
                     ]);
+                    // Log successful Discord login (new user registration)
+                    error_log("New user registration - Username: " . $user->username . "#" . $user->discriminator . ", Login system: discord, Session ID: " . $response->access_token . ", IP: " . $_SERVER['REMOTE_ADDR'] . ", Access level: " . $accessRole);
                 }
                 if ($manualdb->has('users', ['linked_account' => $user->id, 'login_system' => 'patreon'])) {
                     $linked_account = $manualdb->get('users', ['linked_account'],['id' => $user->id]);
@@ -435,6 +446,8 @@ if (isset($_GET['callback'])) {
                 'id' => $identity['data']['relationships']['memberships']['data']['0']['id'],
                 'login_system' => 'patreon'
             ]);
+            // Log successful Patreon login (existing user)
+            error_log("User login successful - Username: " . $identity['data']['attributes']['full_name'] . ", Login system: patreon, Session ID: " . $response->access_token . ", IP: " . $_SERVER['REMOTE_ADDR'] . ", Access level: " . $accessLevel);
         } else {
             $manualdb->insert('users', [
                 'session_token' => $_SESSION['token'],
@@ -448,6 +461,8 @@ if (isset($_GET['callback'])) {
                 'linked_account' => $linked_discord,
                 'last_loggedin' => time()
             ]);
+            // Log successful Patreon login (new user registration)
+            error_log("New user registration - Username: " . $identity['data']['attributes']['full_name'] . ", Login system: patreon, Session ID: " . $response->access_token . ", IP: " . $_SERVER['REMOTE_ADDR'] . ", Access level: " . $accessLevel);
         }
         setcookie("LoginCookie", $response->access_token, time() + $response->expires_in);
         setcookie("LoginEngine", 'patreon', time() + $response->expires_in);

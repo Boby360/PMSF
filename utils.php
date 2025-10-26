@@ -319,6 +319,10 @@ function validateCookie($cookie)
         if (!isset($_SESSION['already_refreshed'])) {
             $_SESSION['already_refreshed'] = true;
         }
+        
+        // Log session restoration from cookie
+        error_log("Session restored from cookie - Username: " . $info['user'] . ", Login system: " . $info['login_system'] . ", Session ID: " . $cookie . ", IP: " . $_SERVER['REMOTE_ADDR']);
+        
         return true;
     } else {
         destroyCookiesAndSessions();
