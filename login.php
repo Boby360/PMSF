@@ -499,13 +499,19 @@ if (!empty($_POST['refresh'])) {
             }
         }
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level', 'discord_guilds'],['id' => $_SESSION['user']->id]);
+        error_log("Discord refresh - DB user lookup: " . ($dbUser ? "Found user ID: " . $dbUser['id'] : "No user found"));
         if (empty($dbUser)) {
+            error_log("Discord refresh failed: Database user is empty");
             $answer['action'] = 'false';
         } else {
+            error_log("Discord refresh - Current access level: " . $dbUser['access_level']);
             $accessLevel = checkAccessLevelDiscord($dbUser['id'], json_decode($dbUser['discord_guilds']));
+            error_log("Discord refresh - New access level check result: " . ($accessLevel !== null ? $accessLevel : 'null'));
             if ($accessLevel == $dbUser['access_level']) {
+                error_log("Discord refresh - Access levels match, returning 'true'");
                 $answer['action'] = 'true';
             } elseif (!empty($accessLevel)) {
+                error_log("Discord refresh - Access level changed, updating database and returning 'reload'");
                 $manualdb->update('users', [
                     'access_level' => $accessLevel,
                     'last_loggedin' => time()
@@ -514,6 +520,7 @@ if (!empty($_POST['refresh'])) {
                 ]);
                 $answer['action'] = 'reload';
             } else {
+                error_log("Discord refresh - Access level check returned empty/null, setting access_level to null and returning 'reload'");
                 $manualdb->update('users', [
                     'access_level' => null,
                     'last_loggedin' => time()
