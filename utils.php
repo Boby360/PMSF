@@ -294,11 +294,13 @@ function validateCookie($cookie)
 {
     global $manualdb, $manualAccessLevel, $sessionLifetime, $useLoginCookie;
 
+    error_log("validateCookie called with: " . $cookie);
     $info = $manualdb->query(
         "SELECT id, user, password, login_system, expire_timestamp, access_level, avatar, session_token FROM users WHERE session_id = :session_id", [
             ":session_id" => $cookie
         ]
     )->fetch();
+    error_log("validateCookie database result: " . ($info ? "Found user: " . $info['user'] : "No user found"));
     if (!empty($info['user'])) {
         if ($useLoginCookie && $info['session_token'] == $_COOKIE['LoginSession']) {
             $manualdb->update('users', ['session_token' => $_SESSION['token']], ['id' => $info['id']]);
@@ -319,8 +321,10 @@ function validateCookie($cookie)
         if (!isset($_SESSION['already_refreshed'])) {
             $_SESSION['already_refreshed'] = true;
         }
+        error_log("validateCookie returning true");
         return true;
     } else {
+        error_log("validateCookie returning false - destroying cookies and sessions");
         destroyCookiesAndSessions();
         return false;
     }
