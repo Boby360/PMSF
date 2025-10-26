@@ -476,11 +476,17 @@ if (!empty($_POST['refresh'])) {
             // Try to restore session from cookie if available
             if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
                 error_log("Attempting to restore session from cookie: " . $_COOKIE['LoginCookie']);
-                if (validateCookie($_COOKIE['LoginCookie']) !== false) {
+                $cookieResult = validateCookie($_COOKIE['LoginCookie']);
+                if ($cookieResult !== false) {
                     error_log("Session restored successfully from cookie");
                     // Session restored, continue with normal flow
                 } else {
-                    error_log("Failed to restore session from cookie");
+                    error_log("Failed to restore session from cookie - validateCookie returned false");
+                    error_log("Cookie value being validated: " . $_COOKIE['LoginCookie']);
+                    // Let's check if the user exists in database
+                    global $manualdb;
+                    $dbCheck = $manualdb->query("SELECT id, user FROM users WHERE session_id = :session_id", [":session_id" => $_COOKIE['LoginCookie']])->fetch();
+                    error_log("Database lookup result: " . ($dbCheck ? "User found: " . $dbCheck['user'] : "No user found"));
                     $answer['action'] = 'false';
                     echo json_encode($answer);
                     exit;

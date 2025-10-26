@@ -318,10 +318,8 @@ function validateCookie($cookie)
         setcookie("LoginSession", $_SESSION['token'], time() + $sessionLifetime);
         if (!isset($_SESSION['already_refreshed'])) {
             $_SESSION['already_refreshed'] = true;
-            return false;
-        } else {
-            return true;
         }
+        return true;
     } else {
         destroyCookiesAndSessions();
         return false;
