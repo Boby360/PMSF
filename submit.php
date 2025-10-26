@@ -1,6 +1,16 @@
 <?php
+// Start output buffering to catch any unwanted output
+ob_start();
+
 include('config/config.php');
 global $map, $fork, $noSubmit;
+
+// Clear any output that might have been generated during includes
+ob_clean();
+
+// Suppress all PHP errors/warnings for JSON API endpoints  
+ini_set('display_errors', 0);
+error_reporting(0);
 
 if ($noSubmit === true) {
     http_response_code(401);

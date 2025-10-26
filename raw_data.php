@@ -1,7 +1,17 @@
 <?php
+// Start output buffering to catch any unwanted output
+ob_start();
+
 $timing['start'] = microtime(true);
 include('config/config.php');
 global $map, $fork;
+
+// Clear any output that might have been generated during includes
+ob_clean();
+
+// Suppress all PHP errors/warnings for JSON API endpoints
+ini_set('display_errors', 0);
+error_reporting(0);
 
 // set content type
 header('Content-Type: application/json');

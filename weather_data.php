@@ -1,6 +1,17 @@
 <?php
+// Start output buffering to catch any unwanted output
+ob_start();
+
 include('config/config.php');
 global $map, $fork;
+
+// Clear any output that might have been generated during includes
+ob_clean();
+
+// Suppress all PHP errors/warnings for JSON API endpoints
+ini_set('display_errors', 0);
+error_reporting(0);
+
 header('Content-Type: application/json');
 // init map
 if (strtolower($map) === "rdm") {
@@ -21,4 +32,7 @@ if (isset($_POST['cell_id'])) {
 $d['weather'] = $return_weather;
 $d['timestamp'] = time();
 $jaysson = json_encode($d);
+
+// End output buffering and send clean JSON response
+ob_end_clean();
 echo $jaysson;
