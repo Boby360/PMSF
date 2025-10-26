@@ -466,14 +466,31 @@ if (!empty($_POST['refresh'])) {
     error_log("Session refresh attempt - Engine: " . $_POST['refresh']);
     error_log("Session exists: " . (isset($_SESSION['user']) ? 'yes' : 'no'));
     error_log("Session user ID: " . (isset($_SESSION['user']->id) ? $_SESSION['user']->id : 'none'));
+    error_log("Session ID: " . session_id());
+    error_log("Process ID: " . getmypid());
+    error_log("LoginCookie: " . (isset($_COOKIE['LoginCookie']) ? $_COOKIE['LoginCookie'] : 'none'));
     
     if ($_POST['refresh'] == 'discord') {
         // Check if user session exists before accessing properties
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
-            error_log("Discord refresh failed: Session user is empty or missing ID");
-            $answer['action'] = 'false';
-            echo json_encode($answer);
-            exit;
+            // Try to restore session from cookie if available
+            if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
+                error_log("Attempting to restore session from cookie: " . $_COOKIE['LoginCookie']);
+                if (validateCookie($_COOKIE['LoginCookie']) !== false) {
+                    error_log("Session restored successfully from cookie");
+                    // Session restored, continue with normal flow
+                } else {
+                    error_log("Failed to restore session from cookie");
+                    $answer['action'] = 'false';
+                    echo json_encode($answer);
+                    exit;
+                }
+            } else {
+                error_log("Discord refresh failed: Session user is empty or missing ID, no cookie available");
+                $answer['action'] = 'false';
+                echo json_encode($answer);
+                exit;
+            }
         }
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level', 'discord_guilds'],['id' => $_SESSION['user']->id]);
         if (empty($dbUser)) {
@@ -504,10 +521,24 @@ if (!empty($_POST['refresh'])) {
     if ($_POST['refresh'] == 'native') {
         // Check if user session exists before accessing properties
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
-            error_log("Native refresh failed: Session user is empty or missing ID");
-            $answer['action'] = 'false';
-            echo json_encode($answer);
-            exit;
+            // Try to restore session from cookie if available
+            if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
+                error_log("Attempting to restore native session from cookie: " . $_COOKIE['LoginCookie']);
+                if (validateCookie($_COOKIE['LoginCookie']) !== false) {
+                    error_log("Native session restored successfully from cookie");
+                    // Session restored, continue with normal flow
+                } else {
+                    error_log("Failed to restore native session from cookie");
+                    $answer['action'] = 'false';
+                    echo json_encode($answer);
+                    exit;
+                }
+            } else {
+                error_log("Native refresh failed: Session user is empty or missing ID, no cookie available");
+                $answer['action'] = 'false';
+                echo json_encode($answer);
+                exit;
+            }
         }
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level'],['id' => $_SESSION['user']->id]);
         if ($_SESSION['user']->access_level != $dbUser['access_level']) {
@@ -517,10 +548,24 @@ if (!empty($_POST['refresh'])) {
     if ($_POST['refresh'] == 'patreon') {
         // Check if user session exists before accessing properties
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
-            error_log("Patreon refresh failed: Session user is empty or missing ID");
-            $answer['action'] = 'false';
-            echo json_encode($answer);
-            exit;
+            // Try to restore session from cookie if available
+            if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
+                error_log("Attempting to restore patreon session from cookie: " . $_COOKIE['LoginCookie']);
+                if (validateCookie($_COOKIE['LoginCookie']) !== false) {
+                    error_log("Patreon session restored successfully from cookie");
+                    // Session restored, continue with normal flow
+                } else {
+                    error_log("Failed to restore patreon session from cookie");
+                    $answer['action'] = 'false';
+                    echo json_encode($answer);
+                    exit;
+                }
+            } else {
+                error_log("Patreon refresh failed: Session user is empty or missing ID, no cookie available");
+                $answer['action'] = 'false';
+                echo json_encode($answer);
+                exit;
+            }
         }
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level'],['id' => $_SESSION['user']->id]);
         if (empty($dbUser)) {
