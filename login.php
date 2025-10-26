@@ -459,6 +459,10 @@ if (isset($_GET['callback'])) {
     }
 }
 if (!empty($_POST['refresh'])) {
+    // Suppress all PHP errors/warnings for JSON API endpoints
+    ini_set('display_errors', 0);
+    error_reporting(0);
+    
     header('Content-Type: application/json');
     $answer = array();
     
