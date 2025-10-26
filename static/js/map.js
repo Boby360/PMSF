@@ -12483,7 +12483,19 @@ function loadUser(engine) {
         },
         dataType: "json",
         cache: false,
-        error: function error() {
+        success: function(data) {
+            console.log("Session refresh success:", data);
+            if (data.action === "reload") {
+                console.log("Reloading page due to access level change");
+                window.location.href = "./logout?action=" + engine + "-logout&reason=change";
+            } else if (data.action === "true") {
+                console.log("Session refresh successful");
+            } else {
+                console.log("Session refresh returned unexpected action:", data.action);
+            }
+        },
+        error: function error(xhr, status, errorThrown) {
+            console.log("Session refresh error - Status:", status, "Error:", errorThrown, "Response:", xhr.responseText);
             // Display error toast
             sendToast(
                 "danger",
@@ -12492,7 +12504,9 @@ function loadUser(engine) {
                 "true"
             );
         },
-        complete: function complete() {},
+        complete: function complete() {
+            console.log("Session refresh complete");
+        },
     });
 }
 function getCookie(cname) {
