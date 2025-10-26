@@ -607,9 +607,11 @@ if (!empty($_POST['refresh'])) {
     
     // If no valid refresh engine was found, return false
     if (empty($answer)) {
+        error_log("Refresh completed - No answer set, defaulting to 'false'");
         $answer['action'] = 'false';
     }
     
+    error_log("Final refresh response: " . json_encode($answer));
     $json = json_encode($answer);
     echo $json;
     die();

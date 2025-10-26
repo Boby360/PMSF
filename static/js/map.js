@@ -8461,9 +8461,17 @@ function updateUser() {
         return false
     }
     loadUser(engine).done(function (result) {
+        console.log('Session refresh success:', result);
         if (result.action === 'reload') {
+            console.log('Refreshing page due to session change');
             window.location.href = './logout?action=' + engine + '-logout&reason=change'
+        } else if (result.action === 'false') {
+            console.log('Session refresh returned false - user may need to re-login');
+        } else if (result.action === 'true') {
+            console.log('Session refresh successful - session is valid');
         }
+    }).fail(function(xhr, status, error) {
+        console.error('Session refresh failed:', status, error, xhr.responseText);
     })
 }
 function loadUser(engine) {
@@ -8476,9 +8484,12 @@ function loadUser(engine) {
         },
         dataType: 'json',
         cache: false,
-        error: function error() {
-            // Display error toast
-            sendToast('danger', i8ln('Failed to refresh session'), i8ln('Manually reload the page.'), 'true')
+        error: function error(xhr, status, errorThrown) {
+            console.error('AJAX Session refresh error:', status, errorThrown, 'Response:', xhr.responseText);
+            // Only show toast for actual network/server errors, not for application-level failures
+            if (status !== 'parsererror' && xhr.status !== 200) {
+                sendToast('danger', i8ln('Failed to refresh session'), i8ln('Manually reload the page.'), 'true')
+            }
         },
         complete: function complete() {
         }
