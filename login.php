@@ -461,9 +461,16 @@ if (isset($_GET['callback'])) {
 if (!empty($_POST['refresh'])) {
     header('Content-Type: application/json');
     $answer = array();
+    
+    // Debug logging
+    error_log("Session refresh attempt - Engine: " . $_POST['refresh']);
+    error_log("Session exists: " . (isset($_SESSION['user']) ? 'yes' : 'no'));
+    error_log("Session user ID: " . (isset($_SESSION['user']->id) ? $_SESSION['user']->id : 'none'));
+    
     if ($_POST['refresh'] == 'discord') {
         // Check if user session exists before accessing properties
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
+            error_log("Discord refresh failed: Session user is empty or missing ID");
             $answer['action'] = 'false';
             echo json_encode($answer);
             exit;
@@ -497,6 +504,7 @@ if (!empty($_POST['refresh'])) {
     if ($_POST['refresh'] == 'native') {
         // Check if user session exists before accessing properties
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
+            error_log("Native refresh failed: Session user is empty or missing ID");
             $answer['action'] = 'false';
             echo json_encode($answer);
             exit;
@@ -509,6 +517,7 @@ if (!empty($_POST['refresh'])) {
     if ($_POST['refresh'] == 'patreon') {
         // Check if user session exists before accessing properties
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
+            error_log("Patreon refresh failed: Session user is empty or missing ID");
             $answer['action'] = 'false';
             echo json_encode($answer);
             exit;

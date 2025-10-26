@@ -10,11 +10,11 @@ if ($noNativeLogin === false || $noDiscordLogin === false || $noPatreonLogin ===
             header("Location: .");
         }
     }
-    if (empty($_SESSION['user']->id) && $forcedLogin === true) {
+    if ((empty($_SESSION['user']) || empty($_SESSION['user']->id)) && $forcedLogin === true) {
         header("Location: ./login?action=login");
         die();
     }
-    if (!empty($_SESSION['user']->updatePwd) && $_SESSION['user']->updatePwd === 1) {
+    if (!empty($_SESSION['user']) && !empty($_SESSION['user']->updatePwd) && $_SESSION['user']->updatePwd === 1) {
         header("Location: ./register?action=updatePwd");
         die();
     }
@@ -212,7 +212,7 @@ if (strtolower($map) === "rdm") {
         if (! $noNotifyNotification) { ?>
             <i id="pushNotifyIcon" data-bs-toggle="tooltip" title=""></i>
         <?php }
-        if (!empty($_SESSION['user']->id)) { ?>
+        if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) { ?>
             <a href="#accountModal" data-bs-toggle="modal" title="<?php echo i8ln('Profile'); ?>"><img src="<?php echo $_SESSION['user']->avatar; ?>"></a>
             <?php
         } else { ?>

@@ -42,7 +42,7 @@ function refreshCsrfToken()
     if (time() - $_SESSION['c'] > $sessionLifetime) {
         session_regenerate_id(true);
         generateToken();
-        if (!empty($_SESSION['user']->id)) {
+        if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) {
             $manualdb->update('users', ['session_token' => $_SESSION['token']], ['id' => $_SESSION['user']->id]);
         }
     }
@@ -60,7 +60,7 @@ function validateToken($token)
     global $enableCsrf, $manualdb, $allowMultiLogin, $forcedLogin, $useLoginCookie, $sessionLifetime;
     if ((!$enableCsrf) || ($enableCsrf && isset($token) && $token === $_SESSION['token'])) {
         $validity = 'valid';
-        if (!empty($_SESSION['user']->id)) {
+        if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) {
             $user = $manualdb->get('users', ['session_token'], ['id' => $_SESSION['user']->id]);
             if ($user['session_token'] == $_SESSION['token'] || $allowMultiLogin) {
                 $validity = 'valid';
@@ -268,7 +268,7 @@ function destroyCookiesAndSessions()
 {
     global $manualdb;
 
-    if (!empty($_SESSION['user']->id)) {
+    if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) {
         $manualdb->update("users", [
             "session_id" => null,
             "avatar" => null,
