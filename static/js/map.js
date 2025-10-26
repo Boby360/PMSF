@@ -9082,7 +9082,7 @@ function drawWeatherOverlay(weather) {
                     markersnotify.addLayer(marker);
                 });
             }
-            weatherArray.push(S2.idToCornerLatLngs(item.s2_cell_id));
+            weatherArray.push(S2.idToCornerLatLngs(String(item.s2_cell_id)));
             var poly = L.polygon(weatherArray, {
                 color: weatherColors[item.condition],
                 opacity: 1,
