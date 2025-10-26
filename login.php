@@ -495,12 +495,24 @@ if (!empty($_POST['refresh'])) {
         }
     }
     if ($_POST['refresh'] == 'native') {
+        // Check if user session exists before accessing properties
+        if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
+            $answer['action'] = 'false';
+            echo json_encode($answer);
+            exit;
+        }
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level'],['id' => $_SESSION['user']->id]);
         if ($_SESSION['user']->access_level != $dbUser['access_level']) {
             $answer['action'] = 'reload';
         }
     }
     if ($_POST['refresh'] == 'patreon') {
+        // Check if user session exists before accessing properties
+        if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
+            $answer['action'] = 'false';
+            echo json_encode($answer);
+            exit;
+        }
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level'],['id' => $_SESSION['user']->id]);
         if (empty($dbUser)) {
             $answer['action'] = 'false';
@@ -525,6 +537,12 @@ if (!empty($_POST['refresh'])) {
             }
         }
     }
+    
+    // If no valid refresh engine was found, return false
+    if (empty($answer)) {
+        $answer['action'] = 'false';
+    }
+    
     $json = json_encode($answer);
     echo $json;
     die();
