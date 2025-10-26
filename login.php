@@ -462,17 +462,20 @@ if (!empty($_POST['refresh'])) {
     header('Content-Type: application/json');
     $answer = array();
     
-
+    error_log("Session refresh for " . $_POST['refresh'] . " - Session ID: " . session_id() . " - Session user exists: " . (isset($_SESSION['user']) ? 'yes' : 'no'));
     
     if ($_POST['refresh'] == 'discord') {
         // Check if user session exists before accessing properties
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
             // Try to restore session from cookie if available
             if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
+                error_log("Attempting to restore session from cookie for discord refresh");
                 $cookieResult = validateCookie($_COOKIE['LoginCookie']);
                 if ($cookieResult !== false) {
+                    error_log("Session restored successfully - Session user now exists: " . (isset($_SESSION['user']) ? 'yes' : 'no'));
                     // Session restored, continue with normal flow
                 } else {
+                    error_log("Session restoration failed");
                     $answer['action'] = 'false';
                     echo json_encode($answer);
                     exit;
@@ -483,8 +486,10 @@ if (!empty($_POST['refresh'])) {
                 exit;
             }
         }
+        error_log("Discord refresh: Looking up user with ID: " . $_SESSION['user']->id);
         $dbUser = $manualdb->get('users', ['id','session_id', 'access_level', 'discord_guilds'],['id' => $_SESSION['user']->id]);
         if (empty($dbUser)) {
+            error_log("Discord refresh: No database user found for ID: " . $_SESSION['user']->id);
             $answer['action'] = 'false';
         } else {
             $accessLevel = checkAccessLevelDiscord($dbUser['id'], json_decode($dbUser['discord_guilds']));
@@ -514,9 +519,12 @@ if (!empty($_POST['refresh'])) {
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
             // Try to restore session from cookie if available
             if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
+                error_log("Attempting to restore session from cookie for native refresh");
                 if (validateCookie($_COOKIE['LoginCookie']) !== false) {
+                    error_log("Session restored successfully for native - Session user now exists: " . (isset($_SESSION['user']) ? 'yes' : 'no'));
                     // Session restored, continue with normal flow
                 } else {
+                    error_log("Session restoration failed for native");
                     $answer['action'] = 'false';
                     echo json_encode($answer);
                     exit;
@@ -537,9 +545,12 @@ if (!empty($_POST['refresh'])) {
         if (empty($_SESSION['user']) || !isset($_SESSION['user']->id)) {
             // Try to restore session from cookie if available
             if (isset($_COOKIE['LoginCookie']) && !empty($_COOKIE['LoginCookie'])) {
+                error_log("Attempting to restore session from cookie for patreon refresh");
                 if (validateCookie($_COOKIE['LoginCookie']) !== false) {
+                    error_log("Session restored successfully for patreon - Session user now exists: " . (isset($_SESSION['user']) ? 'yes' : 'no'));
                     // Session restored, continue with normal flow
                 } else {
+                    error_log("Session restoration failed for patreon");
                     $answer['action'] = 'false';
                     echo json_encode($answer);
                     exit;
@@ -580,6 +591,7 @@ if (!empty($_POST['refresh'])) {
         $answer['action'] = 'false';
     }
     
+    error_log("Session refresh response: " . json_encode($answer));
     $json = json_encode($answer);
     echo $json;
     die();
