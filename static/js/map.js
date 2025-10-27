@@ -6073,18 +6073,51 @@ function loadRawData() {
                     }, 5000);
                     break;
                 case 401:
-                    sendToast(
-                        "danger",
-                        i8ln("Unauthorized"),
-                        i8ln(
-                            "Another device just logged in with the same account."
-                        ),
-                        "true"
-                    );
-                    setTimeout(function () {
-                        window.location.href =
-                            "./login?action=login&error=invalid-token";
-                    }, 5000);
+                    if (typeof loginDisabled !== "undefined" && loginDisabled) {
+                        // Login is completely disabled - generic session error
+                        sendToast(
+                            "danger",
+                            i8ln("Session Error"),
+                            i8ln(
+                                "Your session has expired. The page will reload automatically."
+                            ),
+                            "true"
+                        );
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 3000);
+                    } else if (
+                        typeof allowMultiLogin !== "undefined" &&
+                        allowMultiLogin
+                    ) {
+                        // Multi-login enabled - session expired, not device conflict
+                        sendToast(
+                            "danger",
+                            i8ln("Session Error"),
+                            i8ln(
+                                "Your session has expired. Please log in again."
+                            ),
+                            "true"
+                        );
+                        setTimeout(function () {
+                            window.location.href =
+                                "./login?action=login&error=invalid-token";
+                        }, 5000);
+                    } else {
+                        // Single login mode - device conflict possible
+                        sendToast(
+                            "danger",
+                            i8ln("Session Error"),
+                            i8ln(
+                                "Another device just logged in with the same account"
+                            ),
+                            "true"
+                        );
+                        setTimeout(function () {
+                            window.location.href =
+                                "./login?action=login&error=invalid-token";
+                        }, 5000);
+                    }
                     break;
                 case 403:
                     sendToast(
