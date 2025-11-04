@@ -344,6 +344,9 @@ if (forcedTileServer) {
     Store.set("map_style", "tileserver");
 }
 if (noRaids && Store.get("showRaids")) {
+    if (typeof enableJSDebug !== 'undefined' && enableJSDebug) {
+        console.log('[FORCE DISABLE] Raids are disabled on server (noRaids=true), forcing showRaids to false')
+    }
     Store.set("showRaids", false);
 }
 if (!noDarkMode && Store.get("darkMode")) {
@@ -1372,8 +1375,17 @@ function initSidebar() {
     $("#gyms-filter-wrapper").toggle(Store.get("showGyms"));
     $("#team-gyms-only-switch").val(Store.get("showTeamGymsOnly"));
     $("#open-gyms-only-switch").prop("checked", Store.get("showOpenGymsOnly"));
-    $("#raids-switch").prop("checked", Store.get("showRaids"));
-    $("#raids-filter-wrapper").toggle(Store.get("showRaids"));
+    var showRaidsValue = Store.get("showRaids");
+    $("#raids-switch").prop("checked", showRaidsValue);
+    $("#raids-filter-wrapper").toggle(showRaidsValue);
+    
+    if (typeof enableJSDebug !== 'undefined' && enableJSDebug) {
+        console.log('[INIT] Raids switch initialized:', {
+            showRaids: showRaidsValue,
+            noRaids: typeof noRaids !== 'undefined' ? noRaids : 'undefined',
+            enableRaids: typeof enableRaids !== 'undefined' ? enableRaids : 'undefined'
+        })
+    }
     $("#rocket-wrapper").toggle(Store.get("showRocket"));
     $("#eventstops-wrapper").toggle(Store.get("showEventStops"));
     $("#active-raids-switch").prop("checked", Store.get("activeRaids"));
@@ -12494,6 +12506,68 @@ function checkAndCreateSound(pokemonId = 0) {
         }
     }
 }
+
+// Debugging function for localStorage issues
+function debugLocalStorage() {
+    console.group('🔍 PMSF LocalStorage Debug Report')
+    
+    // Browser info
+    console.log('📱 Browser Info:', {
+        userAgent: navigator.userAgent,
+        cookieEnabled: navigator.cookieEnabled,
+        localStorage: typeof localStorage !== 'undefined'
+    })
+    
+    // Storage capacity test
+    try {
+        var testKey = 'pmsf-storage-test'
+        localStorage.setItem(testKey, 'test')
+        localStorage.removeItem(testKey)
+        console.log('✅ LocalStorage write/delete test: PASSED')
+    } catch (e) {
+        console.error('❌ LocalStorage write test FAILED:', e.message)
+    }
+    
+    // Raids-specific debug
+    console.group('🎯 Raids Settings Debug')
+    console.log('Server Config:', {
+        noRaids: typeof noRaids !== 'undefined' ? noRaids : 'undefined',
+        enableRaids: typeof enableRaids !== 'undefined' ? enableRaids : 'undefined'
+    })
+    
+    var rawShowRaids = localStorage.getItem('showRaids')
+    var parsedShowRaids = Store.get('showRaids')
+    console.log('LocalStorage Values:', {
+        'localStorage["showRaids"]': rawShowRaids,
+        'Store.get("showRaids")': parsedShowRaids,
+        'UI checkbox checked': $('#raids-switch').is(':checked')
+    })
+    console.groupEnd()
+    
+    // All PMSF localStorage keys
+    console.group('💾 All PMSF LocalStorage Keys')
+    var pmsfKeys = []
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i)
+        if (Object.prototype.hasOwnProperty.call(StoreOptions, key)) {
+            pmsfKeys.push({
+                key: key,
+                value: localStorage.getItem(key),
+                parsed: Store.get(key)
+            })
+        }
+    }
+    console.table(pmsfKeys)
+    console.groupEnd()
+    
+    console.groupEnd()
+    
+    return 'Debug complete! Check console above for details.'
+}
+
+// Make debug function globally available
+window.debugLocalStorage = debugLocalStorage
+
 function updateUser() {
     var engine = getCookie("LoginEngine");
     if (engine === "") {

@@ -560,15 +560,37 @@ var Store = {
         var option = this.getOption(key)
         var optionType = option.type
         var rawValue = localStorage[key]
-        if (rawValue === null || rawValue === undefined) {
-            return option.default
+        var result = (rawValue === null || rawValue === undefined) ? option.default : optionType.parse(rawValue)
+        
+        // Debug logging for raids setting specifically
+        if (typeof enableJSDebug !== 'undefined' && enableJSDebug && key === 'showRaids') {
+            console.log('[Store.get] showRaids:', {
+                key: key,
+                rawValue: rawValue,
+                default: option.default,
+                result: result,
+                timestamp: new Date().toISOString()
+            })
         }
-        return optionType.parse(rawValue)
+        
+        return result
     },
     set: function setKey(key, value) {
         var option = this.getOption(key)
         var optionType = option.type || StoreTypes.String
-        localStorage[key] = optionType.stringify(value)
+        var stringValue = optionType.stringify(value)
+        
+        // Debug logging for raids setting specifically
+        if (typeof enableJSDebug !== 'undefined' && enableJSDebug && key === 'showRaids') {
+            console.log('[Store.set] showRaids:', {
+                key: key,
+                value: value,
+                stringValue: stringValue,
+                timestamp: new Date().toISOString()
+            })
+        }
+        
+        localStorage[key] = stringValue
     },
     reset: function reset(key) {
         localStorage.removeItem(key)
