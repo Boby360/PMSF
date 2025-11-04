@@ -563,7 +563,7 @@ var Store = {
         var result = (rawValue === null || rawValue === undefined) ? option.default : optionType.parse(rawValue)
         
         // Debug logging for raids setting specifically
-        if (typeof enableJSDebug !== 'undefined' && enableJSDebug && key === 'showRaids') {
+        if (typeof enableJSDebug2 !== 'undefined' && enableJSDebug2 && key === 'showRaids') {
             console.log('[Store.get] showRaids - key:', key, 'rawValue:', rawValue, 'default:', option.default, 'result:', result, 'timestamp:', new Date().toISOString())
         }
         
@@ -575,7 +575,7 @@ var Store = {
         var stringValue = optionType.stringify(value)
         
         // Debug logging for raids setting specifically
-        if (typeof enableJSDebug !== 'undefined' && enableJSDebug && key === 'showRaids') {
+        if (typeof enableJSDebug2 !== 'undefined' && enableJSDebug2 && key === 'showRaids') {
             console.log('[Store.set] showRaids - key:', key, 'value:', value, 'stringValue:', stringValue, 'timestamp:', new Date().toISOString())
         }
         

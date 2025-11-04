@@ -344,7 +344,7 @@ if (forcedTileServer) {
     Store.set("map_style", "tileserver");
 }
 if (noRaids && Store.get("showRaids")) {
-    if (typeof enableJSDebug !== 'undefined' && enableJSDebug) {
+    if (typeof enableJSDebug2 !== 'undefined' && enableJSDebug2) {
         console.log('[FORCE DISABLE] Raids are disabled on server (noRaids=true), forcing showRaids to false')
     }
     Store.set("showRaids", false);
@@ -1379,7 +1379,7 @@ function initSidebar() {
     $("#raids-switch").prop("checked", showRaidsValue);
     $("#raids-filter-wrapper").toggle(showRaidsValue);
     
-    if (typeof enableJSDebug !== 'undefined' && enableJSDebug) {
+    if (typeof enableJSDebug2 !== 'undefined' && enableJSDebug2) {
         console.log('[INIT] Raids switch initialized - showRaids:', showRaidsValue, 'noRaids:', typeof noRaids !== 'undefined' ? noRaids : 'undefined', 'enableRaids:', typeof enableRaids !== 'undefined' ? enableRaids : 'undefined')
     }
     $("#rocket-wrapper").toggle(Store.get("showRocket"));
