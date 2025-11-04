@@ -1380,11 +1380,7 @@ function initSidebar() {
     $("#raids-filter-wrapper").toggle(showRaidsValue);
     
     if (typeof enableJSDebug !== 'undefined' && enableJSDebug) {
-        console.log('[INIT] Raids switch initialized:', {
-            showRaids: showRaidsValue,
-            noRaids: typeof noRaids !== 'undefined' ? noRaids : 'undefined',
-            enableRaids: typeof enableRaids !== 'undefined' ? enableRaids : 'undefined'
-        })
+        console.log('[INIT] Raids switch initialized - showRaids:', showRaidsValue, 'noRaids:', typeof noRaids !== 'undefined' ? noRaids : 'undefined', 'enableRaids:', typeof enableRaids !== 'undefined' ? enableRaids : 'undefined')
     }
     $("#rocket-wrapper").toggle(Store.get("showRocket"));
     $("#eventstops-wrapper").toggle(Store.get("showEventStops"));
@@ -12512,11 +12508,10 @@ function debugLocalStorage() {
     console.group('🔍 PMSF LocalStorage Debug Report')
     
     // Browser info
-    console.log('📱 Browser Info:', {
-        userAgent: navigator.userAgent,
-        cookieEnabled: navigator.cookieEnabled,
-        localStorage: typeof localStorage !== 'undefined'
-    })
+    console.log('📱 Browser Info:')
+    console.log('  User Agent:', navigator.userAgent)
+    console.log('  Cookies Enabled:', navigator.cookieEnabled)
+    console.log('  LocalStorage Available:', typeof localStorage !== 'undefined')
     
     // Storage capacity test
     try {
@@ -12530,18 +12525,16 @@ function debugLocalStorage() {
     
     // Raids-specific debug
     console.group('🎯 Raids Settings Debug')
-    console.log('Server Config:', {
-        noRaids: typeof noRaids !== 'undefined' ? noRaids : 'undefined',
-        enableRaids: typeof enableRaids !== 'undefined' ? enableRaids : 'undefined'
-    })
+    console.log('Server Config:')
+    console.log('  noRaids:', typeof noRaids !== 'undefined' ? noRaids : 'undefined')
+    console.log('  enableRaids:', typeof enableRaids !== 'undefined' ? enableRaids : 'undefined')
     
     var rawShowRaids = localStorage.getItem('showRaids')
     var parsedShowRaids = Store.get('showRaids')
-    console.log('LocalStorage Values:', {
-        'localStorage["showRaids"]': rawShowRaids,
-        'Store.get("showRaids")': parsedShowRaids,
-        'UI checkbox checked': $('#raids-switch').is(':checked')
-    })
+    console.log('LocalStorage Values:')
+    console.log('  localStorage["showRaids"]:', rawShowRaids)
+    console.log('  Store.get("showRaids"):', parsedShowRaids)
+    console.log('  UI checkbox checked:', $('#raids-switch').is(':checked'))
     console.groupEnd()
     
     // All PMSF localStorage keys
@@ -12557,7 +12550,11 @@ function debugLocalStorage() {
             })
         }
     }
-    console.table(pmsfKeys)
+    if (pmsfKeys.length > 0) {
+        console.table(pmsfKeys)
+    } else {
+        console.log('No PMSF localStorage keys found')
+    }
     console.groupEnd()
     
     console.groupEnd()

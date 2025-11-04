@@ -564,13 +564,7 @@ var Store = {
         
         // Debug logging for raids setting specifically
         if (typeof enableJSDebug !== 'undefined' && enableJSDebug && key === 'showRaids') {
-            console.log('[Store.get] showRaids:', {
-                key: key,
-                rawValue: rawValue,
-                default: option.default,
-                result: result,
-                timestamp: new Date().toISOString()
-            })
+            console.log('[Store.get] showRaids - key:', key, 'rawValue:', rawValue, 'default:', option.default, 'result:', result, 'timestamp:', new Date().toISOString())
         }
         
         return result
@@ -582,12 +576,7 @@ var Store = {
         
         // Debug logging for raids setting specifically
         if (typeof enableJSDebug !== 'undefined' && enableJSDebug && key === 'showRaids') {
-            console.log('[Store.set] showRaids:', {
-                key: key,
-                value: value,
-                stringValue: stringValue,
-                timestamp: new Date().toISOString()
-            })
+            console.log('[Store.set] showRaids - key:', key, 'value:', value, 'stringValue:', stringValue, 'timestamp:', new Date().toISOString())
         }
         
         localStorage[key] = stringValue
