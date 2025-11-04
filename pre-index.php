@@ -1788,6 +1788,7 @@ include('modals.php');
     var noPvpCapText = <?php echo $noPvpCapText === true ? 'true' : 'false' ?>;
     var noHideSingleMarker = <?php echo $noHideSingleMarker === true ? 'true' : 'false' ?>;
     var enableJSDebug = <?php echo $enableJSDebug === true ? 'true' : 'false' ?>;
+    var enableJSDebug2 = <?php echo $enableJSDebug2 === true ? 'true' : 'false' ?>;
     var loginDisabled = <?php echo ($noNativeLogin && $noDiscordLogin && $noPatreonLogin) ? 'true' : 'false' ?>;
     var allowMultiLogin = <?php echo $allowMultiLogin === true ? 'true' : 'false' ?>;
     // When A Setting Is Disabled, Ensure Filtering Is Also Disabled to Prevent Invisible Filtering
