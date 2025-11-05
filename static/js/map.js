@@ -311,11 +311,9 @@ L.Marker.addInitHook(function () {
 if (location.search.indexOf("login=true") > 0) {
     $("#nav").load(window.location.href + "#nav");
     window.location.href = "/";
-    // Skip localStorage initialization during login redirect
-    return;
-}
-// Only initialize localStorage settings if user is logged in or no login required
-if (token || !forcedLogin) {
+} else {
+    // Only initialize localStorage settings if user is logged in or no login required
+    if (token || !forcedLogin) {
     if (copyrightSafe) {
         var setPokemon = Store.get("iconsArray");
         setPokemon.pokemon = "static/sprites/";
@@ -361,6 +359,7 @@ if (token || !forcedLogin) {
     }
     if (noQuestsARTaskToggle) {
         Store.set("showQuestsWithTaskAR", true);
+    }
     }
 }
 
