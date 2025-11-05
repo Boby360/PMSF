@@ -1802,7 +1802,10 @@ include('modals.php');
     console.log('[ACCESS DEBUG] noRaids Final Value:', <?php echo isset($noRaids) ? ($noRaids ? 'true' : 'false') : 'undefined'; ?>);
     console.log('[ACCESS DEBUG] enableRaids Final Value:', '<?php echo isset($enableRaids) ? $enableRaids : 'undefined'; ?>');
     <?php endif; ?>
+    
+    <?php if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) { ?>
     // When A Setting Is Disabled, Ensure Filtering Is Also Disabled to Prevent Invisible Filtering
+    // Only write default values to localStorage when user is logged in
     if (minIV === "") { localStorage.setItem('remember_text_min_iv', <?php echo $minIV; ?>) }
     if (minLevel === "") { localStorage.setItem('remember_text_min_level', <?php echo $minLevel; ?>) }
     if (minLLRank === "") { localStorage.setItem('remember_text_min_ll_rank', <?php echo $minLLRank; ?>) }
@@ -1816,6 +1819,7 @@ include('modals.php');
     if (String(showXXL) !== String(localStorage.getItem('showXXL'))) { localStorage.setItem('showXXL', false) }
     if (String(showMissingIVOnly) !== String(localStorage.getItem('showMissingIVOnly'))) { localStorage.setItem('showMissingIVOnly', false) }
     if (String(showIndependantPvpAndStats) !== String(localStorage.getItem('showIndependantPvpAndStats'))) { localStorage.setItem('showIndependantPvpAndStats', false) }
+    <?php } ?>
 
 </script>
 <script src="static/dist/js/map.common.min.js"></script>
@@ -1823,7 +1827,21 @@ include('modals.php');
 <script src="static/dist/js/stats.min.js"></script>
 <script>
 $( document ).ready(function() {
+    <?php if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) { ?>
+    // User is logged in - initialize the map and load settings
     initMap()
+    <?php } elseif ($noNativeLogin && $noDiscordLogin && $noPatreonLogin) { ?>
+    // Login is completely disabled (public access) - initialize the map normally
+    initMap()
+    <?php } else { ?>
+    // User is not logged in but login is available
+    <?php if ($forcedLogin === true) { ?>
+    // Forced login is enabled, redirect will happen on server side
+    <?php } else { ?>
+    // Show login modal for optional login
+    $('#accountModal').modal('show');
+    <?php } ?>
+    <?php } ?>
 })
 </script>
 </body>
