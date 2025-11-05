@@ -312,48 +312,51 @@ if (location.search.indexOf("login=true") > 0) {
     $("#nav").load(window.location.href + "#nav");
     window.location.href = "/";
 }
-if (copyrightSafe) {
-    var setPokemon = Store.get("iconsArray");
-    setPokemon.pokemon = "static/sprites/";
-    Store.set("iconsArray", setPokemon);
-} else if (localStorage.hasOwnProperty("iconsArray")) {
-    var oldIconsArray = Store.get("iconsArray");
-    for (const [key, value] of Object.entries(iconFolderArray)) {
-        if (Object.prototype.toString.call(value) === "[object String]") {
-            oldIconsArray[key] = iconFolderArray[key];
-        } else if (
-            key in oldIconsArray === false ||
-            Object.values(iconFolderArray[key]).includes(oldIconsArray[key]) ===
-                false
-        ) {
-            oldIconsArray[key] =
-                iconFolderArray[key][Object.keys(iconFolderArray[key])[0]];
+// Only initialize localStorage settings if user is logged in or no login required
+if (token || !forcedLogin) {
+    if (copyrightSafe) {
+        var setPokemon = Store.get("iconsArray");
+        setPokemon.pokemon = "static/sprites/";
+        Store.set("iconsArray", setPokemon);
+    } else if (localStorage.hasOwnProperty("iconsArray")) {
+        var oldIconsArray = Store.get("iconsArray");
+        for (const [key, value] of Object.entries(iconFolderArray)) {
+            if (Object.prototype.toString.call(value) === "[object String]") {
+                oldIconsArray[key] = iconFolderArray[key];
+            } else if (
+                key in oldIconsArray === false ||
+                Object.values(iconFolderArray[key]).includes(oldIconsArray[key]) ===
+                    false
+            ) {
+                oldIconsArray[key] =
+                    iconFolderArray[key][Object.keys(iconFolderArray[key])[0]];
+            }
         }
-    }
-    Store.set("iconsArray", oldIconsArray);
-} else {
-    for (const [key, value] of Object.entries(iconFolderArray)) {
-        if (Object.prototype.toString.call(value) === "[object Object]") {
-            iconFolderArray[key] =
-                iconFolderArray[key][Object.keys(iconFolderArray[key])[0]];
+        Store.set("iconsArray", oldIconsArray);
+    } else {
+        for (const [key, value] of Object.entries(iconFolderArray)) {
+            if (Object.prototype.toString.call(value) === "[object Object]") {
+                iconFolderArray[key] =
+                    iconFolderArray[key][Object.keys(iconFolderArray[key])[0]];
+            }
         }
+        Store.set("iconsArray", iconFolderArray);
     }
-    Store.set("iconsArray", iconFolderArray);
-}
-if (forcedTileServer) {
-    Store.set("map_style", "tileserver");
-}
-if (noRaids && Store.get("showRaids")) {
-    if (typeof enableJSDebug2 !== 'undefined' && enableJSDebug2) {
-        console.log('[FORCE DISABLE] Raids are disabled on server (noRaids=true), forcing showRaids to false')
+    if (forcedTileServer) {
+        Store.set("map_style", "tileserver");
     }
-    Store.set("showRaids", false);
-}
-if (!noDarkMode && Store.get("darkMode")) {
-    enableDarkMode();
-}
-if (noQuestsARTaskToggle) {
-    Store.set("showQuestsWithTaskAR", true);
+    if (noRaids && Store.get("showRaids")) {
+        if (typeof enableJSDebug2 !== 'undefined' && enableJSDebug2) {
+            console.log('[FORCE DISABLE] Raids are disabled on server (noRaids=true), forcing showRaids to false')
+        }
+        Store.set("showRaids", false);
+    }
+    if (!noDarkMode && Store.get("darkMode")) {
+        enableDarkMode();
+    }
+    if (noQuestsARTaskToggle) {
+        Store.set("showQuestsWithTaskAR", true);
+    }
 }
 
 function previewPoiImage(event) {
