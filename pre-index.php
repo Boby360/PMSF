@@ -1795,12 +1795,12 @@ include('modals.php');
     // Debug access level and raids configuration
     <?php if (isset($enableJSDebug2) && $enableJSDebug2): ?>
     console.log('[ACCESS DEBUG] User:', '<?php echo isset($_SESSION['user']->user) ? addslashes($_SESSION['user']->user) : 'No user session'; ?>');
-    console.log('[ACCESS DEBUG] Access Level Query Result:', <?php echo json_encode($userAccessLevel); ?>);
+    console.log('[ACCESS DEBUG] Access Level Query Result:', <?php echo json_encode(isset($userAccessLevel) ? $userAccessLevel : null); ?>);
     console.log('[ACCESS DEBUG] Detected Access Level:', <?php echo isset($userAccessLevel['access_level']) ? $userAccessLevel['access_level'] : 'null'; ?>);
-    console.log('[ACCESS DEBUG] Donor Level Constant:', <?php echo $donorLevel; ?>);
-    console.log('[ACCESS DEBUG] User Level Constant:', <?php echo $userLevel; ?>);
-    console.log('[ACCESS DEBUG] noRaids Final Value:', <?php echo $noRaids ? 'true' : 'false'; ?>);
-    console.log('[ACCESS DEBUG] enableRaids Final Value:', '<?php echo $enableRaids; ?>');
+    console.log('[ACCESS DEBUG] Donor Level Constant:', <?php echo isset($donorLevel) ? $donorLevel : 'undefined'; ?>);
+    console.log('[ACCESS DEBUG] User Level Constant:', <?php echo isset($userLevel) ? $userLevel : 'undefined'; ?>);
+    console.log('[ACCESS DEBUG] noRaids Final Value:', <?php echo isset($noRaids) ? ($noRaids ? 'true' : 'false') : 'undefined'; ?>);
+    console.log('[ACCESS DEBUG] enableRaids Final Value:', '<?php echo isset($enableRaids) ? $enableRaids : 'undefined'; ?>');
     <?php endif; ?>
     // When A Setting Is Disabled, Ensure Filtering Is Also Disabled to Prevent Invisible Filtering
     if (minIV === "") { localStorage.setItem('remember_text_min_iv', <?php echo $minIV; ?>) }
