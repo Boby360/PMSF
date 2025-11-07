@@ -1893,34 +1893,36 @@ $( document ).ready(function() {
     }
     ?>
     
-    <?php if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) { ?>
-    // User is logged in - initialize the map and load settings
+    <?php 
+    // Check if user should have access (either logged in session OR valid cookie)
+    $hasValidSession = (!empty($_SESSION['user']) && !empty($_SESSION['user']->id));
+    $hasValidCookie = (!empty($_SESSION['token']) && isset($_COOKIE["LoginCookie"]));
+    $loginDisabled = ($noNativeLogin && $noDiscordLogin && $noPatreonLogin);
+    $hasProblematicSession = (isset($_SESSION['user']) && empty($_SESSION['user']->id));
+    
+    if ($hasValidSession || $hasValidCookie || $loginDisabled) { ?>
+    // User has valid session/cookie or login is disabled - initialize the map
+    console.log('[SESSION INFO] Initializing map - Valid session: <?php echo $hasValidSession ? 'true' : 'false'; ?>, Valid cookie: <?php echo $hasValidCookie ? 'true' : 'false'; ?>, Login disabled: <?php echo $loginDisabled ? 'true' : 'false'; ?>');
     initMap()
-    <?php } elseif ($noNativeLogin && $noDiscordLogin && $noPatreonLogin) { ?>
-    // Login is completely disabled (public access) - initialize the map normally
-    initMap()
-    <?php } else { ?>
-    // User is not logged in but login is available
-    <?php if ($forcedLogin === true) { ?>
-    // Forced login is enabled - check for problematic sessions
-    <?php if (isset($_SESSION['user']) && empty($_SESSION['user']->id)) { ?>
+    <?php } elseif ($forcedLogin === true) { ?>
+    // Forced login is enabled and no valid session/cookie
+    <?php if ($hasProblematicSession) { ?>
     // Problematic session detected - user object exists but no ID
     console.log('[SESSION ERROR] Problematic session detected - user exists but no ID');
-    // Clear the problematic session and redirect
     <?php 
     logSessionRecovery('forced_login_clear_corrupted', 'User object exists but no ID');
     session_destroy();
     ?>
     window.location.href = './login?action=login';
     <?php } else { ?>
-    // Normal case - no session at all with forced login
-    console.log('[SESSION INFO] No session with forced login - redirecting');
-    <?php logSessionRecovery('forced_login_redirect', 'No session detected'); ?>
+    // Normal case - no valid session/cookie with forced login
+    console.log('[SESSION INFO] No valid session/cookie with forced login - redirecting');
+    <?php logSessionRecovery('forced_login_redirect', 'No valid session or cookie detected'); ?>
     window.location.href = './login?action=login';
     <?php } ?>
     <?php } else { ?>
-    // Optional login - but check for problematic sessions first
-    <?php if (isset($_SESSION['user']) && empty($_SESSION['user']->id)) { ?>
+    // Optional login case
+    <?php if ($hasProblematicSession) { ?>
     // Problematic session detected - clear it and show login modal
     console.log('[SESSION ERROR] Problematic session detected with optional login - clearing session');
     <?php 
@@ -1928,13 +1930,12 @@ $( document ).ready(function() {
     session_destroy();
     ?>
     $('#accountModal').modal('show');
-    // Don't initialize map with corrupted session
     <?php } else { ?>
-    // Normal optional login case
-    <?php logSessionRecovery('optional_login_normal', 'No session - initializing map and showing login modal'); ?>
+    // Normal optional login case - no valid session/cookie
+    console.log('[SESSION INFO] Optional login - no valid session/cookie, initializing map and showing login modal');
+    <?php logSessionRecovery('optional_login_normal', 'No session/cookie - initializing map and showing login modal'); ?>
     initMap()
     $('#accountModal').modal('show');
-    <?php } ?>
     <?php } ?>
     <?php } ?>
 })
