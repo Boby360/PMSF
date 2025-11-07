@@ -606,7 +606,7 @@ class Golbat extends Scanner
         return $data;
     }
 
-    public function get_stops($geids, $qpeids, $qeeids, $qceids, $qieids, $swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oSwLng = 0, $oNeLat = 0, $oNeLng = 0, $lures, $eventstops, $rocket, $quests, $dustamount, $xpamount, $quests_with_ar)
+    public function get_stops($geids, $qpeids, $qeeids, $qceids, $qieids, $swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oSwLng = 0, $oNeLat = 0, $oNeLng = 0, $lures = null, $eventstops = null, $rocket = null, $quests = null, $dustamount = null, $xpamount = null, $quests_with_ar = null)
     {
         $conds = array();
         $params = array();
@@ -728,7 +728,7 @@ class Golbat extends Scanner
         return $this->query_stops($conds, $params, $quests_with_ar);
     }
 
-    public function get_stops_quest($greids, $qpreids, $qereids, $qcreids, $qireids, $swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oSwLng = 0, $oNeLat = 0, $oNeLng = 0, $lures, $eventstops, $rocket, $quests, $dustamount, $reloaddustamount, $xpamount, $reloadxpamount, $quests_with_ar)
+    public function get_stops_quest($greids, $qpreids, $qereids, $qcreids, $qireids, $swLat, $swLng, $neLat, $neLng, $tstamp = 0, $oSwLat = 0, $oSwLng = 0, $oNeLat = 0, $oNeLng = 0, $lures = null, $eventstops = null, $rocket = null, $quests = null, $dustamount = null, $reloaddustamount = null, $xpamount = null, $reloadxpamount = null, $quests_with_ar = null)
     {
         $conds = array();
         $params = array();
@@ -1009,7 +1009,7 @@ class Golbat extends Scanner
         return $data;
     }
 
-    public function get_gyms($rbeids, $reeids, $swLat, $swLng, $neLat, $neLng, $exEligible = false, $tstamp = 0, $oSwLat = 0, $oSwLng = 0, $oNeLat = 0, $oNeLng = 0, $raids, $gyms)
+    public function get_gyms($rbeids, $reeids, $swLat, $swLng, $neLat, $neLng, $exEligible = false, $tstamp = 0, $oSwLat = 0, $oSwLng = 0, $oNeLat = 0, $oNeLng = 0, $raids = null, $gyms = null)
     {
         $conds = array();
         $params = array();
