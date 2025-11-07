@@ -4,23 +4,78 @@ if (! file_exists('config/config.php')) {
     die("<h1>Config file missing</h1><p>Please ensure you have created your config file (<code>config/config.php</code>).</p>");
 }
 include('config/config.php');
+
+// Server-side session debugging
+if (isset($enableJSDebug2) && $enableJSDebug2) {
+    $sessionDebugInfo = [
+        'timestamp' => date('Y-m-d H:i:s'),
+        'session_id' => session_id(),
+        'session_user_exists' => isset($_SESSION['user']),
+        'session_user_id_exists' => isset($_SESSION['user']->id),
+        'session_token_exists' => !empty($_SESSION['token']),
+        'forced_login' => $forcedLogin ?? false,
+        'cookie_exists' => isset($_COOKIE["LoginCookie"]),
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
+        'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+    ];
+    
+    if (isset($_SESSION['user'])) {
+        $sessionDebugInfo['user_object'] = $_SESSION['user'];
+    }
+    
+    error_log('[PMSF SESSION DEBUG] ' . json_encode($sessionDebugInfo));
+}
+
 if ($noNativeLogin === false || $noDiscordLogin === false || $noPatreonLogin === false) {
     if (isset($_COOKIE["LoginCookie"])) {
         if (validateCookie($_COOKIE["LoginCookie"]) === false) {
             // Cookie is invalid, redirect to login instead of creating infinite loop
+            if (isset($enableJSDebug2) && $enableJSDebug2) {
+                error_log('[PMSF SESSION DEBUG] Cookie validation failed - redirecting to login');
+            }
             header("Location: ./login?action=login");
             exit;
         }
     }
+    
+    // Check for problematic sessions and log them
+    if (isset($_SESSION['user']) && empty($_SESSION['user']->id)) {
+        if (isset($enableJSDebug2) && $enableJSDebug2) {
+            error_log('[PMSF SESSION ERROR] Problematic session detected - user exists but no ID: ' . json_encode($_SESSION['user']));
+        }
+    }
+    
     if ((empty($_SESSION['user']) || empty($_SESSION['user']->id)) && $forcedLogin === true) {
+        if (isset($enableJSDebug2) && $enableJSDebug2) {
+            error_log('[PMSF SESSION DEBUG] Forced login redirect - no valid session');
+        }
         header("Location: ./login?action=login");
         die();
     }
     if (!empty($_SESSION['user']) && !empty($_SESSION['user']->updatePwd) && $_SESSION['user']->updatePwd === 1) {
+        if (isset($enableJSDebug2) && $enableJSDebug2) {
+            error_log('[PMSF SESSION DEBUG] Password update required - redirecting');
+        }
         header("Location: ./register?action=updatePwd");
         die();
     }
 }
+
+// Function to log problematic session recovery attempts
+function logSessionRecovery($action, $details = '') {
+    global $enableJSDebug2;
+    if (isset($enableJSDebug2) && $enableJSDebug2) {
+        $logData = [
+            'timestamp' => date('Y-m-d H:i:s'),
+            'action' => $action,
+            'details' => $details,
+            'session_id' => session_id(),
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        ];
+        error_log('[PMSF SESSION RECOVERY] ' . json_encode($logData));
+    }
+}
+
 $zoom        = ! empty($_GET['zoom']) ? $_GET['zoom'] : null;
 $encounterId = ! empty($_GET['encId']) ? $_GET['encId'] : null;
 $stopId = ! empty($_GET['stopId']) ? $_GET['stopId'] : null;
@@ -1827,6 +1882,17 @@ include('modals.php');
 <script src="static/dist/js/stats.min.js"></script>
 <script>
 $( document ).ready(function() {
+    <?php 
+    // Debug session state for problematic sessions
+    if (isset($enableJSDebug2) && $enableJSDebug2) {
+        echo "console.log('[SESSION DEBUG] Session user exists:', " . (isset($_SESSION['user']) ? 'true' : 'false') . ");";
+        echo "console.log('[SESSION DEBUG] Session user ID exists:', " . (isset($_SESSION['user']->id) ? 'true' : 'false') . ");";
+        echo "console.log('[SESSION DEBUG] Session user object:', " . json_encode(isset($_SESSION['user']) ? $_SESSION['user'] : null) . ");";
+        echo "console.log('[SESSION DEBUG] Token exists:', " . (!empty($_SESSION['token']) ? 'true' : 'false') . ");";
+        echo "console.log('[SESSION DEBUG] Forced login:', " . ($forcedLogin ? 'true' : 'false') . ");";
+    }
+    ?>
+    
     <?php if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) { ?>
     // User is logged in - initialize the map and load settings
     initMap()
@@ -1836,10 +1902,39 @@ $( document ).ready(function() {
     <?php } else { ?>
     // User is not logged in but login is available
     <?php if ($forcedLogin === true) { ?>
-    // Forced login is enabled, redirect will happen on server side
+    // Forced login is enabled - check for problematic sessions
+    <?php if (isset($_SESSION['user']) && empty($_SESSION['user']->id)) { ?>
+    // Problematic session detected - user object exists but no ID
+    console.log('[SESSION ERROR] Problematic session detected - user exists but no ID');
+    // Clear the problematic session and redirect
+    <?php 
+    logSessionRecovery('forced_login_clear_corrupted', 'User object exists but no ID');
+    session_destroy();
+    ?>
+    window.location.href = './login?action=login';
     <?php } else { ?>
-    // Show login modal for optional login
+    // Normal case - no session at all with forced login
+    console.log('[SESSION INFO] No session with forced login - redirecting');
+    <?php logSessionRecovery('forced_login_redirect', 'No session detected'); ?>
+    window.location.href = './login?action=login';
+    <?php } ?>
+    <?php } else { ?>
+    // Optional login - but check for problematic sessions first
+    <?php if (isset($_SESSION['user']) && empty($_SESSION['user']->id)) { ?>
+    // Problematic session detected - clear it and show login modal
+    console.log('[SESSION ERROR] Problematic session detected with optional login - clearing session');
+    <?php 
+    logSessionRecovery('optional_login_clear_corrupted', 'User object exists but no ID - showing login modal');
+    session_destroy();
+    ?>
     $('#accountModal').modal('show');
+    // Don't initialize map with corrupted session
+    <?php } else { ?>
+    // Normal optional login case
+    <?php logSessionRecovery('optional_login_normal', 'No session - initializing map and showing login modal'); ?>
+    initMap()
+    $('#accountModal').modal('show');
+    <?php } ?>
     <?php } ?>
     <?php } ?>
 })
