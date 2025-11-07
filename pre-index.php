@@ -1858,9 +1858,16 @@ include('modals.php');
     console.log('[ACCESS DEBUG] enableRaids Final Value:', '<?php echo isset($enableRaids) ? $enableRaids : 'undefined'; ?>');
     <?php endif; ?>
     
-    <?php if (!empty($_SESSION['user']) && !empty($_SESSION['user']->id)) { ?>
+    <?php 
+    // Check if user should have localStorage initialized (session user, valid token, or valid cookie)
+    $hasValidSession = (!empty($_SESSION['user']) && !empty($_SESSION['user']->id));
+    $hasValidToken = !empty($_SESSION['token']);
+    $hasValidCookie = isset($_COOKIE["LoginCookie"]);
+    $loginDisabled = ($noNativeLogin && $noDiscordLogin && $noPatreonLogin);
+    
+    if ($hasValidSession || $hasValidToken || $hasValidCookie || $loginDisabled) { ?>
     // When A Setting Is Disabled, Ensure Filtering Is Also Disabled to Prevent Invisible Filtering
-    // Only write default values to localStorage when user is logged in
+    // Initialize localStorage when user has valid session, token, cookie, or login is disabled
     if (minIV === "") { localStorage.setItem('remember_text_min_iv', <?php echo $minIV; ?>) }
     if (minLevel === "") { localStorage.setItem('remember_text_min_level', <?php echo $minLevel; ?>) }
     if (minLLRank === "") { localStorage.setItem('remember_text_min_ll_rank', <?php echo $minLLRank; ?>) }
@@ -1900,9 +1907,11 @@ $( document ).ready(function() {
     $loginDisabled = ($noNativeLogin && $noDiscordLogin && $noPatreonLogin);
     $hasProblematicSession = (isset($_SESSION['user']) && empty($_SESSION['user']->id));
     
-    if ($hasValidSession || $hasValidCookie || $loginDisabled) { ?>
-    // User has valid session/cookie or login is disabled - initialize the map
-    console.log('[SESSION INFO] Initializing map - Valid session: <?php echo $hasValidSession ? 'true' : 'false'; ?>, Valid cookie: <?php echo $hasValidCookie ? 'true' : 'false'; ?>, Login disabled: <?php echo $loginDisabled ? 'true' : 'false'; ?>');
+    // Always initialize map if we have a token (which indicates successful authentication flow)
+    // or if login is disabled, regardless of session state timing
+    if ($hasValidSession || $hasValidCookie || $loginDisabled || !empty($_SESSION['token'])) { ?>
+    // User has valid session/cookie/token or login is disabled - initialize the map
+    console.log('[SESSION INFO] Initializing map - Valid session: <?php echo $hasValidSession ? 'true' : 'false'; ?>, Valid cookie: <?php echo $hasValidCookie ? 'true' : 'false'; ?>, Login disabled: <?php echo $loginDisabled ? 'true' : 'false'; ?>, Has token: <?php echo !empty($_SESSION['token']) ? 'true' : 'false'; ?>');
     initMap()
     <?php } elseif ($forcedLogin === true) { ?>
     // Forced login is enabled and no valid session/cookie
