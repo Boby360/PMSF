@@ -58,7 +58,7 @@
     "grunt-javascript-obfuscator": "latest",
     "grunt-minjson": "latest",
     "grunt-newer": "^1.2.0",
-    "grunt-sass": "^3.1.0",
+    "grunt-sass": "^4.1.0",
     "grunt-unused": "latest",
     "grunt-usemin": "https://github.com/pmsf/grunt-usemin/tarball/master",
     "javascript-obfuscator": "4.0.2",
