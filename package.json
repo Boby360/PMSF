@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/pmsf/PMSF#readme",
   "dependencies": {
-    "bootstrap": "5.3.0",
+    "bootstrap": "5.3.8",
     "bootstrap-icons": "^1.4.1",
     "clean": "^4.0.2",
     "datatables": "1.10.18",
