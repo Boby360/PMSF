@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # 1. Track Node.js / NPM dependencies
+  - package-ecosystem: "npm"
+    directory: "/" # Looks for package.json in the root directory
+    schedule:
+      interval: "weekly" # Checks for updates every week
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "javascript"
+
+  # 2. Track PHP / Composer dependencies
+  - package-ecosystem: "composer"
+    directory: "/" # Looks for composer.json in the root directory
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "php"
