@@ -6,9 +6,6 @@ updates:
     schedule:
       interval: "weekly" # Checks for updates every week
     open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "javascript"
 
   # 2. Track PHP / Composer dependencies
   - package-ecosystem: "composer"
@@ -16,6 +13,3 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "php"
