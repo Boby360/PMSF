@@ -740,7 +740,7 @@ $showYourLove = false;                                              // Show vale
 // Do not enable unless requested
 $enableDebug = false;                                               // true/false
 $enableJSDebug = false;                                             // true/false
-
+$enableJSDebug2 = false;
 //-----------------------------------------------------
 // DATABASE CONFIG
 //-----------------------------------------------------
