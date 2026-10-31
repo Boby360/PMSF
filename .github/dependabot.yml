@@ -13,3 +13,10 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+
+  # 3. Track the Docker base images
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
