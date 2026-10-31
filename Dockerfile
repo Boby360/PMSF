@@ -7,7 +7,7 @@
 # - Also mount every other configuration file necessary into the according directory.
 
 ## Stage 1: build frontend assets (static/dist, index.php, register.php)
-FROM node:24-bookworm-slim AS assets
+FROM node:25-bookworm-slim AS assets
 WORKDIR /app
 COPY package.json package-lock.json* ./
 # Use the lockfile when one is committed, so builds are reproducible
