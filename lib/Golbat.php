@@ -282,7 +282,7 @@ class Golbat extends Scanner
             }
         }
         if (!empty($gender) && ($gender == 1 || $gender == 2)) {
-            $conds[] = 'gender = ' . $gender;
+            $conds[] = 'gender = ' . intval($gender);
         }
         if ($missingIvOnly) {
             $conds[] = '(atk_iv IS NULL OR def_iv IS NULL OR sta_iv IS NULL)';
@@ -291,7 +291,7 @@ class Golbat extends Scanner
             $hundoIvSql = ($hundoIv) ? ' OR (atk_iv = 15 AND def_iv = 15 AND sta_iv = 15)' : '';
             $xxsSql = ($xxs && $this->columnExists("pokemon","height")) ? ' OR (size = 1)' : '';
             $xxlSql = ($xxl && $this->columnExists("pokemon","height")) ? ' OR (size = 5)' : '';
-            $exMinIvSql = (!empty($exMinIv)) ? ' OR pokemon_id IN(' . $exMinIv . ')' : '';
+            $exMinIvSql = (!empty($exMinIv)) ? ' OR pokemon_id IN(' . implode(',', array_map('intval', explode(',', $exMinIv))) . ')' : '';
             if ($minIv !== 0) {
                 $conds[] = '(iv >= ' . $minIv . $zeroIvSql . $hundoIvSql . $xxsSql . $xxlSql . $exMinIvSql . ')';
             }
@@ -301,7 +301,13 @@ class Golbat extends Scanner
         }
         $encSql = '';
         if ($encId != 0) {
-            $encSql = " OR (id = " . $encId . " AND lat > '" . $swLat . "' AND lon > '" . $swLng . "' AND lat < '" . $neLat . "' AND lon < '" . $neLng . "' AND expire_timestamp > '" . $params[':time'] . "')";
+            $encSql = " OR (id = CAST(:encId AS UNSIGNED) AND lat > :encSwLat AND lon > :encSwLng AND lat < :encNeLat AND lon < :encNeLng AND expire_timestamp > :encTime)";
+            $params[':encId'] = (string) $encId;
+            $params[':encSwLat'] = $swLat;
+            $params[':encSwLng'] = $swLng;
+            $params[':encNeLat'] = $neLat;
+            $params[':encNeLng'] = $neLng;
+            $params[':encTime'] = $params[':time'];
         }
         return $this->query_active($conds, $params, $minIv, $minLevel, $minLLRank, $minGLRank, $minULRank, $exMinIv, $zeroIv, $hundoIv, $xxs, $xxl, $independantPvpAndStats, $missingIvOnly, $encSql);
     }
@@ -356,7 +362,7 @@ class Golbat extends Scanner
             }
         }
         if (!empty($gender) && ($gender == 1 || $gender == 2)) {
-            $conds[] = 'gender = ' . $gender;
+            $conds[] = 'gender = ' . intval($gender);
         }
         if ($missingIvOnly) {
             $conds[] = '(atk_iv IS NULL OR def_iv IS NULL OR sta_iv IS NULL)';
@@ -365,7 +371,7 @@ class Golbat extends Scanner
             $hundoIvSql = ($hundoIv) ? ' OR (atk_iv = 15 AND def_iv = 15 AND sta_iv = 15)' : '';
             $xxsSql = ($xxs && $this->columnExists("pokemon","height")) ? ' OR (size = 1)' : '';
             $xxlSql = ($xxl && $this->columnExists("pokemon","height")) ? ' OR (size = 5)' : '';
-            $exMinIvSql = (!empty($exMinIv)) ? ' OR pokemon_id IN(' . $exMinIv . ')' : '';
+            $exMinIvSql = (!empty($exMinIv)) ? ' OR pokemon_id IN(' . implode(',', array_map('intval', explode(',', $exMinIv))) . ')' : '';
             if ($minIv !== 0) {
                 $conds[] = '(iv >= ' . $minIv . $zeroIvSql . $hundoIvSql . $xxsSql . $xxlSql . $exMinIvSql . ')';
             }
