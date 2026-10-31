@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35fb4cc478a2339ffcd0ad039de4b47b",
+    "content-hash": "f35c7cae419246f7824cf9e983e39d42",
     "packages": [
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -579,25 +579,25 @@
         },
         {
             "name": "mjaschen/phpgeo",
-            "version": "5.0.0",
+            "version": "6.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mjaschen/phpgeo.git",
-                "reference": "20524a47c8edc76364c7373911224a710aeb1cae"
+                "reference": "b3ef05a4948d73f8a9f5e7e44899223850c8f49a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mjaschen/phpgeo/zipball/20524a47c8edc76364c7373911224a710aeb1cae",
-                "reference": "20524a47c8edc76364c7373911224a710aeb1cae",
+                "url": "https://api.github.com/repos/mjaschen/phpgeo/zipball/b3ef05a4948d73f8a9f5e7e44899223850c8f49a",
+                "reference": "b3ef05a4948d73f8a9f5e7e44899223850c8f49a",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.0",
-                "squizlabs/php_codesniffer": "^3.7",
-                "vimeo/psalm": "^5.0"
+                "phpstan/phpstan": "^2.0",
+                "phpunit/phpunit": "^11.0",
+                "squizlabs/php_codesniffer": "^3.7"
             },
             "type": "library",
             "autoload": {
@@ -646,7 +646,7 @@
                 "docs": "https://phpgeo.marcusjaschen.de/Installation.html",
                 "email": "mjaschen@gmail.com",
                 "issues": "https://github.com/mjaschen/phpgeo/issues",
-                "source": "https://github.com/mjaschen/phpgeo/tree/5.0.0"
+                "source": "https://github.com/mjaschen/phpgeo/tree/6.0.4"
             },
             "funding": [
                 {
@@ -658,7 +658,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-07T09:53:11+00:00"
+            "time": "2026-08-06T05:32:13+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -1922,5 +1922,5 @@
         "php": ">=8.1"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
