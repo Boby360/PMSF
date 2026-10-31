@@ -23,7 +23,7 @@
   ],
   "author": "Whitewillem & Wheel",
   "license": "ISC",
-    "babel": {
+  "babel": {
     "presets": [
       "@babel/preset-env"
     ]
@@ -68,10 +68,10 @@
     "leaflet.markercluster": "https://github.com/pmsf/Leaflet.markercluster/tarball/master",
     "long": "^4.0.0",
     "moment": "2.29.4",
-    "node-sass": "^9.0.0",
     "phplint": "^2.0.5",
     "@popperjs/core": "^2.10.1",
-    "push.js": "^1.0.12"
+    "push.js": "^1.0.12",
+    "sass": "^1.107.1"
   },
   "devDependencies": {
     "@babel/core": "^7.22.6",
