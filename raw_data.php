@@ -23,14 +23,14 @@ $d = array();
 
 $d["timestamp"] = $now->getTimestamp();
 
-$swLat = !empty($_POST['swLat']) ? $_POST['swLat'] : 0;
-$neLng = !empty($_POST['neLng']) ? $_POST['neLng'] : 0;
-$swLng = !empty($_POST['swLng']) ? $_POST['swLng'] : 0;
-$neLat = !empty($_POST['neLat']) ? $_POST['neLat'] : 0;
-$oSwLat = !empty($_POST['oSwLat']) ? $_POST['oSwLat'] : 0;
-$oSwLng = !empty($_POST['oSwLng']) ? $_POST['oSwLng'] : 0;
-$oNeLat = !empty($_POST['oNeLat']) ? $_POST['oNeLat'] : 0;
-$oNeLng = !empty($_POST['oNeLng']) ? $_POST['oNeLng'] : 0;
+$swLat = !empty($_POST['swLat']) ? floatval($_POST['swLat']) : 0;
+$neLng = !empty($_POST['neLng']) ? floatval($_POST['neLng']) : 0;
+$swLng = !empty($_POST['swLng']) ? floatval($_POST['swLng']) : 0;
+$neLat = !empty($_POST['neLat']) ? floatval($_POST['neLat']) : 0;
+$oSwLat = !empty($_POST['oSwLat']) ? floatval($_POST['oSwLat']) : 0;
+$oSwLng = !empty($_POST['oSwLng']) ? floatval($_POST['oSwLng']) : 0;
+$oNeLat = !empty($_POST['oNeLat']) ? floatval($_POST['oNeLat']) : 0;
+$oNeLng = !empty($_POST['oNeLng']) ? floatval($_POST['oNeLng']) : 0;
 $lures = !empty($_POST['lures']) ? $_POST['lures'] : false;
 $eventstops = !empty($_POST['eventstops']) ? $_POST['eventstops'] : false;
 $rocket = !empty($_POST['rocket']) ? $_POST['rocket'] : false;
@@ -47,7 +47,7 @@ $minIv = isset($_POST['minIV']) ? intval($_POST['minIV']) : 0;
 $prevMinIv = !empty($_POST['prevMinIV']) ? $_POST['prevMinIV'] : false;
 $minLevel = isset($_POST['minLevel']) ? intval($_POST['minLevel']) : 0;
 $prevMinLevel = !empty($_POST['prevMinLevel']) ? $_POST['prevMinLevel'] : false;
-$exMinIv = !empty($_POST['exMinIV']) ? $_POST['exMinIV'] : '';
+$exMinIv = !empty($_POST['exMinIV']) ? implode(',', array_filter(array_map('intval', explode(',', $_POST['exMinIV'])))) : '';
 $bigKarp = (!empty($_POST['bigKarp']) && $_POST['bigKarp'] == 'true') ? true : false;
 $tinyRat = (!empty($_POST['tinyRat']) && $_POST['tinyRat'] == 'true') ? true : false;
 $zeroIv  = (!empty($_POST['zeroIv'])  && $_POST['zeroIv']  == 'true') ? true : false;
@@ -93,7 +93,7 @@ $loadShinyStats = !empty($_POST['loadShinyStats']) ? $_POST['loadShinyStats'] : 
 if ($minIv < $prevMinIv || $minLevel < $prevMinLevel || $minLLRank < $prevMinLLRank || $minGLRank < $prevMinGLRank || $minULRank < $prevMinULRank) {
     $lastpokemon = false;
 }
-$enc_id = !empty($_POST['encId']) ? $_POST['encId'] : null;
+$enc_id = (!empty($_POST['encId']) && is_string($_POST['encId']) && preg_match('/^\d{1,20}$/', $_POST['encId'])) ? $_POST['encId'] : null;
 
 $timestamp = !empty($_POST['timestamp']) ? $_POST['timestamp'] : 0;
 
@@ -111,10 +111,10 @@ if (!empty($validity)) {
     switch ($validity) {
         case 'invalid':
             http_response_code(401);
-            break;
+            die();
         case 'no-id':
             http_response_code(404);
-            break;
+            die();
     }
 }
 

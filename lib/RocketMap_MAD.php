@@ -67,7 +67,7 @@ class RocketMap_MAD extends RocketMap
             }
         }
         if (!empty($gender) && ($gender == 1 || $gender == 2)) {
-            $conds[] = 'gender = ' . $gender;
+            $conds[] = 'gender = ' . intval($gender);
         }
         if ($missingIvOnly) {
             $conds[] = '(individual_attack IS NULL OR individual_defense IS NULL OR individual_stamina IS NULL)';
@@ -76,7 +76,7 @@ class RocketMap_MAD extends RocketMap
             $hundoIvSql = ($hundoIv) ? ' OR (individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15)' : '';
             $xxsSql = ($xxs && $this->columnExists("pokemon","size")) ? ' OR (size = 1)' : '';
             $xxlSql = ($xxl && $this->columnExists("pokemon","size")) ? ' OR (size = 5)' : '';
-            $exMinIvSql = (!empty($exMinIv)) ? ' OR pokemon_id IN(' . $exMinIv . ')' : '';
+            $exMinIvSql = (!empty($exMinIv)) ? ' OR pokemon_id IN(' . implode(',', array_map('intval', explode(',', $exMinIv))) . ')' : '';
             if ($minIv !== 0) {
                 $conds[] = '((individual_attack' . $float . ' + individual_defense' . $float . ' + individual_stamina' . $float . ') >= ' . ($minIv * .45) . $zeroIvSql . $hundoIvSql . $xxsSql . $xxlSql . $exMinIvSql . ')';
             }
@@ -86,7 +86,14 @@ class RocketMap_MAD extends RocketMap
         }
         $encSql = '';
         if ($encId != 0) {
-            $encSql = " OR (encounter_id = " . $encId . " AND p.latitude > '" . $swLat . "' AND p.longitude > '" . $swLng . "' AND p.latitude < '" . $neLat . "' AND p.longitude < '" . $neLng . "' AND disappear_time > '" . $params[':time'] . "')";
+            $encIdSql = $db->info()['driver'] == 'pgsql' ? "CAST(:encId AS NUMERIC)" : "CAST(:encId AS UNSIGNED)";
+            $encSql = " OR (encounter_id = " . $encIdSql . " AND p.latitude > :encSwLat AND p.longitude > :encSwLng AND p.latitude < :encNeLat AND p.longitude < :encNeLng AND disappear_time > :encTime)";
+            $params[':encId'] = (string) $encId;
+            $params[':encSwLat'] = $swLat;
+            $params[':encSwLng'] = $swLng;
+            $params[':encNeLat'] = $neLat;
+            $params[':encNeLng'] = $neLng;
+            $params[':encTime'] = $params[':time'];
         }
         return $this->query_active($conds, $params, $minIv, $minLevel, $minLLRank, $minGLRank, $minULRank, $exMinIv, $zeroIv, $hundoIv, $xxs, $xxl, $independantPvpAndStats, $missingIvOnly, $encSql);
     }
@@ -147,7 +154,7 @@ class RocketMap_MAD extends RocketMap
             }
         }
         if (!empty($gender) && ($gender == 1 || $gender == 2)) {
-            $conds[] = 'gender = ' . $gender;
+            $conds[] = 'gender = ' . intval($gender);
         }
         if ($missingIvOnly) {
             $conds[] = '(individual_attack IS NULL OR individual_defense IS NULL OR individual_stamina IS NULL)';
@@ -156,7 +163,7 @@ class RocketMap_MAD extends RocketMap
             $hundoIvSql = ($hundoIv) ? ' OR (individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15)' : '';
             $xxsSql = ($xxs && $this->columnExists("pokemon","size")) ? ' OR (size = 1)' : '';
             $xxlSql = ($xxl && $this->columnExists("pokemon","size")) ? ' OR (size = 5)' : '';
-            $exMinIvSql = (!empty($exMinIv)) ? ' OR pokemon_id IN(' . $exMinIv . ')' : '';
+            $exMinIvSql = (!empty($exMinIv)) ? ' OR pokemon_id IN(' . implode(',', array_map('intval', explode(',', $exMinIv))) . ')' : '';
             if ($minIv !== 0) {
                 $conds[] = '((individual_attack' . $float . ' + individual_defense' . $float . ' + individual_stamina' . $float . ') >= ' . ($minIv * .45) . $zeroIvSql . $hundoIvSql . $xxsSql . $xxlSql . $exMinIvSql . ')';
             }
