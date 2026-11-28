@@ -22,7 +22,7 @@ RUN mkdir -p /app/web_modules && for pkg in bootstrap bootstrap-icons datatables
     done
 
 ## Stage 2: runtime image without Node, npm or build tooling
-FROM thecodingmachine/php:8.3-v5-apache
+FROM thecodingmachine/php:8.5-v5-apache
 COPY --chown=docker:docker . /var/www/html/
 COPY --from=assets --chown=docker:docker /app/static/dist /var/www/html/static/dist
 COPY --from=assets --chown=docker:docker /app/index.php /app/register.php /var/www/html/
